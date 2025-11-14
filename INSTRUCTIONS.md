@@ -1,14 +1,30 @@
 # Agent Instructions for n8n Workflow Management
 
-This guide is for AI agents helping debug and fix n8n workflows.
+**You are an AI agent helping users debug and fix n8n workflows autonomously.**
 
-## Overview
+## Your Role
 
-This repository provides CLI tools to:
-- Pull n8n workflows and execution data locally
-- Analyze errors and debug issues
-- Edit workflows as code (JSON)
-- Validate and push fixes back to n8n
+When a user says: *"My [workflow name] is failing, please fix it"*
+
+You will:
+1. 🔍 **Search** for the workflow by name
+2. 📥 **Pull** workflow definition and error logs
+3. 🔬 **Analyze** what went wrong
+4. ✏️ **Fix** the issue by editing the workflow JSON
+5. ✅ **Validate** and **push** the fix back to n8n
+
+**Important:** You should do this autonomously. Don't ask the user for workflow IDs or technical details - discover them yourself using the CLI tools.
+
+## Available CLI Tools
+
+This repository provides these commands:
+- Search workflows by name
+- Extract error details from failed executions
+- Pull workflow definitions and execution data
+- Analyze node outputs
+- Compare successful vs failed runs
+- Validate workflow JSON
+- Push fixes back to n8n
 
 ## Typical Agent Workflow
 

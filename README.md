@@ -2,7 +2,50 @@
 
 A command-line tool to manage n8n workflows and executions locally.
 
-## Quick Setup
+## 🤖 For Non-Developers (AI Agent Mode)
+
+**Got a broken n8n workflow? Just tell an AI agent:**
+
+```
+You: "My Todoist Notion Sync workflow is failing, please fix it"
+
+AI: 🔍 Searching for workflow...
+    📥 Pulling workflow and error logs...
+    🔬 Analyzing execution data...
+    ✏️  Fixing configuration issue in "Create page" node...
+    ✅ Validated and pushed fix to n8n!
+```
+
+**That's it.** The agent does everything automatically - no coding required.
+
+**What the agent does behind the scenes:**
+1. Searches for your workflow by name
+2. Pulls workflow definition and error logs
+3. Analyzes what went wrong (API errors, data issues, etc.)
+4. Edits the workflow JSON to fix the issue
+5. Validates the fix and pushes it back to n8n
+
+### How to Use with AI
+
+**Option 1: Claude Code (Recommended)**
+```bash
+# In this repo directory
+claude code
+# Then: "My Todoist workflow is broken, please fix it"
+```
+
+**Option 2: Any AI Assistant**
+1. Clone this repo
+2. Run setup: `./setup.sh`
+3. Point your AI assistant (Claude, Cursor, etc.) to this directory
+4. Share [INSTRUCTIONS.md](INSTRUCTIONS.md) with the agent
+5. Say: *"My [workflow name] is failing, please debug and fix it"*
+
+The AI will handle everything autonomously.
+
+---
+
+## Quick Setup (For First Time)
 
 **One-line setup**:
 
@@ -148,16 +191,10 @@ n8n-scripts/
 4. **Push changes**: `./n8n push workflows/<file>.json`
 5. **Debug with executions**: `./n8n pull-executions <workflow-id>` to see actual node outputs
 
-## For AI Agents
+## For Developers
 
-This tool is designed to be agent-friendly! See **[INSTRUCTIONS.md](INSTRUCTIONS.md)** for a complete guide on:
-- Finding workflows by name
-- Extracting error details
-- Analyzing execution data
-- Comparing failed vs successful runs
-- Validating and pushing fixes
+Manual workflow debugging commands are available for hands-on troubleshooting:
 
-**Quick agent workflow:**
 ```bash
 ./n8n search "My Workflow"     # Find the workflow
 ./n8n errors <workflow-id>      # See what's failing
@@ -166,6 +203,8 @@ This tool is designed to be agent-friendly! See **[INSTRUCTIONS.md](INSTRUCTIONS
 ./n8n validate <file>           # Check it's valid
 ./n8n push <file>              # Deploy the fix
 ```
+
+See sections below for detailed usage.
 
 ## Analyzing Execution Data
 
