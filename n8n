@@ -164,14 +164,40 @@ async function pushWorkflow(filePath) {
 
   const workflow = JSON.parse(fs.readFileSync(filePath, 'utf8'));
 
+  // Only core workflow definition fields are writable via API
+  const allowedFields = [
+    'name',
+    'nodes',
+    'connections',
+    'settings',
+    'staticData'
+  ];
+
+  // Read-only fields (excluded automatically):
+  // id, createdAt, updatedAt, versionId, versionCounter, triggerCount,
+  // shared, meta, isArchived, active, tags
+
   if (workflow.id) {
-    // Update existing workflow
-    const { id, ...updateData } = workflow;
-    await makeRequest(`/api/v1/workflows/${id}`, 'PUT', updateData);
-    console.log(`✅ Updated workflow ${id}\n`);
+    // Update existing workflow - filter to only allowed fields
+    const updateData = {};
+    allowedFields.forEach(field => {
+      if (workflow[field] !== undefined) {
+        updateData[field] = workflow[field];
+      }
+    });
+
+    await makeRequest(`/api/v1/workflows/${workflow.id}`, 'PUT', updateData);
+    console.log(`✅ Updated workflow ${workflow.id}\n`);
   } else {
-    // Create new workflow
-    const response = await makeRequest('/api/v1/workflows', 'POST', workflow);
+    // Create new workflow - filter to only allowed fields
+    const createData = {};
+    allowedFields.forEach(field => {
+      if (workflow[field] !== undefined) {
+        createData[field] = workflow[field];
+      }
+    });
+
+    const response = await makeRequest('/api/v1/workflows', 'POST', createData);
     console.log(`✅ Created workflow ${response.id}\n`);
   }
 }
