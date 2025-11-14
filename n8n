@@ -7,7 +7,6 @@ const path = require('path');
 const { URL } = require('url');
 
 // Configuration
-const CONFIG_FILE = path.join(__dirname, '.n8n-config.json');
 const ENV_FILE = path.join(__dirname, '.env');
 const WORKFLOWS_DIR = path.join(__dirname, 'workflows');
 const EXECUTIONS_DIR = path.join(__dirname, 'executions');
@@ -36,11 +35,11 @@ function loadEnv() {
   }
 }
 
-// Load config from env vars (preferred) or JSON file (fallback)
+// Load config from .env file
 function loadConfig() {
   loadEnv();
 
-  // Check env vars first
+  // Check required env vars
   if (process.env.N8N_BASE_URL && process.env.N8N_API_KEY) {
     return {
       baseUrl: process.env.N8N_BASE_URL,
@@ -49,28 +48,12 @@ function loadConfig() {
     };
   }
 
-  // Fallback to JSON config
-  if (fs.existsSync(CONFIG_FILE)) {
-    try {
-      return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
-    } catch (error) {
-      console.error(`❌ Invalid JSON in ${CONFIG_FILE}: ${error.message}`);
-      process.exit(1);
-    }
-  }
-
   // No config found
   console.error('❌ No configuration found!');
-  console.error('\nOption 1 (Recommended): Create a .env file:');
+  console.error('\nCreate a .env file with your credentials:');
   console.error('  N8N_BASE_URL=https://your-n8n-instance.com');
   console.error('  N8N_API_KEY=your-api-key-here');
   console.error('  N8N_PROJECT_ID=your-project-id  # optional');
-  console.error('\nOption 2: Create .n8n-config.json:');
-  console.error(JSON.stringify({
-    baseUrl: 'https://your-n8n-instance.com',
-    apiKey: 'your-api-key-here',
-    projectId: 'your-project-id'
-  }, null, 2));
   console.error('\nRun: ./setup.sh');
   process.exit(1);
 }

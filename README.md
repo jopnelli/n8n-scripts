@@ -2,46 +2,25 @@
 
 A command-line tool to manage n8n workflows and executions locally.
 
-## 🤖 For Non-Developers (AI Agent Mode)
+## 🤖 AI Agent Mode
 
-**Got a broken n8n workflow? Just tell an AI agent:**
+This tool can be used by AI agents to autonomously debug and fix n8n workflows. When you describe a workflow problem to an AI assistant (in any phrasing), the agent can:
 
-```
-You: "My Todoist Notion Sync workflow is failing, please fix it"
+1. **Find** the workflow by searching for it by name
+2. **Pull** workflow definition and recent error logs
+3. **Analyze** execution data to understand what failed
+4. **Fix** the issue by editing the workflow JSON
+5. **Validate** and **push** the corrected workflow back to n8n
 
-AI: 🔍 Searching for workflow...
-    📥 Pulling workflow and error logs...
-    🔬 Analyzing execution data...
-    ✏️  Fixing configuration issue in "Create page" node...
-    ✅ Validated and pushed fix to n8n!
-```
+No coding required on your part - describe the problem however you want, and the agent handles the technical work.
 
-**That's it.** The agent does everything automatically - no coding required.
+### Setup for AI Assistants
 
-**What the agent does behind the scenes:**
-1. Searches for your workflow by name
-2. Pulls workflow definition and error logs
-3. Analyzes what went wrong (API errors, data issues, etc.)
-4. Edits the workflow JSON to fix the issue
-5. Validates the fix and pushes it back to n8n
-
-### How to Use with AI
-
-**Option 1: Claude Code (Recommended)**
-```bash
-# In this repo directory
-claude code
-# Then: "My Todoist workflow is broken, please fix it"
-```
-
-**Option 2: Any AI Assistant**
 1. Clone this repo
-2. Run setup: `./setup.sh`
-3. Point your AI assistant (Claude, Cursor, etc.) to this directory
-4. Share [INSTRUCTIONS.md](INSTRUCTIONS.md) with the agent
-5. Say: *"My [workflow name] is failing, please debug and fix it"*
+2. Run `./setup.sh` and configure `.env` with your n8n credentials
+3. Point your AI assistant to this directory
 
-The AI will handle everything autonomously.
+Works with: Claude Code, Cursor, or any AI assistant with file access.
 
 ---
 
@@ -68,38 +47,19 @@ Test it works:
 ./n8n list
 ```
 
-<details>
-<summary>Alternative: JSON config (click to expand)</summary>
-
-You can also use `.n8n-config.json` instead of `.env`:
-
-```bash
-cp .n8n-config.json.example .n8n-config.json
-```
-
-Then edit the JSON file with your credentials. The tool will use `.env` if present, otherwise falls back to `.n8n-config.json`.
-
-</details>
-
 ## What's Included
 
 Essential files (always needed):
 
 - **`n8n`** - Main CLI tool
 - **`setup.sh`** - One-command setup
-- **`.env.example`** - Environment variables template (recommended)
-- **`.n8n-config.json.example`** - JSON config template (alternative)
+- **`.env.example`** - Environment variables template
 - **`.gitignore`** - Keeps credentials safe
 
 Helper scripts:
 
 - **`extract-node-data.js`** - Analyze execution node outputs
 - **`diff-workflow.sh`** - Compare local vs remote workflows
-
-Documentation:
-
-- **`README.md`** - This file
-- **`INSTRUCTIONS.md`** - Agent guide for AI debugging workflows
 
 The `workflows/` and `executions/` folders are created automatically when you use the tool.
 
@@ -175,7 +135,7 @@ Read-only fields (like `active`, `tags`, timestamps) are automatically filtered 
 ```
 n8n-scripts/
 ├── n8n                     # CLI executable
-├── .n8n-config.json        # API credentials (gitignored)
+├── .env                    # API credentials (gitignored)
 ├── workflows/              # Pulled workflow JSON files
 │   └── <id>_<name>.json
 └── executions/             # Execution data with node outputs
@@ -229,5 +189,5 @@ Example:
 
 - Execution files contain full node data including inputs/outputs
 - Use executions for debugging - see exactly what each node produced
-- Workflow files can be version controlled (but exclude `.n8n-config.json`)
+- Workflow files can be version controlled (but keep `.env` private)
 - Use `extract-node-data.js` to quickly inspect what data flows through each node

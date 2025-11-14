@@ -4,13 +4,13 @@ echo "🚀 n8n CLI Setup"
 echo ""
 
 # Check if config already exists
-if [ -f ".env" ] || [ -f ".n8n-config.json" ]; then
+if [ -f ".env" ]; then
     echo "⚠️  Configuration already exists. Skipping setup."
     echo ""
     exit 0
 fi
 
-# Create .env from template (recommended method)
+# Create .env from template
 cp .env.example .env
 
 echo "✅ Created .env from template"
@@ -22,6 +22,4 @@ echo "   3. Run: ./n8n list"
 echo ""
 echo "Example .env:"
 cat .env
-echo ""
-echo "💡 Tip: You can also use .n8n-config.json if you prefer JSON format"
 echo ""
