@@ -5,48 +5,56 @@ A command-line tool to manage n8n workflows and executions locally.
 ## Quick Setup
 
 **One-line setup**:
+
 ```bash
 ./setup.sh
 ```
 
-Then edit `.n8n-config.json` with your credentials and run:
+Then edit `.env` with your credentials:
+
+```bash
+# .env
+N8N_BASE_URL=https://n8n.yourcompany.com
+N8N_API_KEY=your-api-key-here
+N8N_PROJECT_ID=your-project-id  # optional
+```
+
+Test it works:
+
 ```bash
 ./n8n list
 ```
 
 <details>
-<summary>Manual setup (click to expand)</summary>
+<summary>Alternative: JSON config (click to expand)</summary>
 
-1. **Copy the config template**:
-   ```bash
-   cp .n8n-config.json.example .n8n-config.json
-   ```
+You can also use `.n8n-config.json` instead of `.env`:
 
-2. **Add your n8n credentials** to `.n8n-config.json`:
-   - `baseUrl`: Your n8n instance URL (e.g., `https://n8n.yourcompany.com`)
-   - `apiKey`: Generate from n8n Settings → API
-   - `projectId`: (Optional) Filter to specific project
+```bash
+cp .n8n-config.json.example .n8n-config.json
+```
 
-3. **Test it works**:
-   ```bash
-   ./n8n list
-   ```
+Then edit the JSON file with your credentials. The tool will use `.env` if present, otherwise falls back to `.n8n-config.json`.
 
 </details>
 
 ## What's Included
 
 Essential files (always needed):
+
 - **`n8n`** - Main CLI tool
 - **`setup.sh`** - One-command setup
-- **`.n8n-config.json.example`** - Config template
+- **`.env.example`** - Environment variables template (recommended)
+- **`.n8n-config.json.example`** - JSON config template (alternative)
 - **`.gitignore`** - Keeps credentials safe
 
 Helper scripts:
+
 - **`extract-node-data.js`** - Analyze execution node outputs
 - **`diff-workflow.sh`** - Compare local vs remote workflows
 
 Documentation:
+
 - **`README.md`** - This file
 
 The `workflows/` and `executions/` folders are created automatically when you use the tool.
@@ -59,11 +67,13 @@ The `workflows/` and `executions/` folders are created automatically when you us
 ## Usage
 
 ### List Workflows
+
 ```bash
 ./n8n list
 ```
 
 ### Pull Workflows
+
 ```bash
 # Pull all workflows
 ./n8n pull all
@@ -73,6 +83,7 @@ The `workflows/` and `executions/` folders are created automatically when you us
 ```
 
 ### Pull Executions (with artifacts/node outputs)
+
 ```bash
 # Pull last 10 executions
 ./n8n pull-executions mp3KdoJFgCDT5ktt
@@ -82,16 +93,27 @@ The `workflows/` and `executions/` folders are created automatically when you us
 ```
 
 ### Push Workflow Changes
+
 ```bash
 # Edit workflow JSON locally, then push
 ./n8n push workflows/mp3KdoJFgCDT5ktt_Workflow_Name.json
 ```
 
+**Note:** Only core workflow fields can be updated via push:
+
+- `name` - Workflow name
+- `nodes` - Workflow nodes and their configuration
+- `connections` - Node connections
+- `settings` - Workflow settings
+- `staticData` - Static workflow data
+
+Read-only fields (like `active`, `tags`, timestamps) are automatically filtered out and must be changed in the n8n UI.
+
 ## Directory Structure
 
 ```
 n8n-scripts/
-├── n8n                      # CLI executable
+├── n8n                     # CLI executable
 ├── .n8n-config.json        # API credentials (gitignored)
 ├── workflows/              # Pulled workflow JSON files
 │   └── <id>_<name>.json
@@ -120,6 +142,7 @@ Use the helper script to inspect node outputs from executions:
 ```
 
 Example:
+
 ```bash
 ./extract-node-data.js executions/mp3KdoJFgCDT5ktt/437776_manual_success.json
 ./extract-node-data.js executions/mp3KdoJFgCDT5ktt/437776_manual_success.json "Get many rows Katalog"

@@ -1,4 +1,5 @@
 # Config with credentials
+.env
 .n8n-config.json
 
 # Dependencies

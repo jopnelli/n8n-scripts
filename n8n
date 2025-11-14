@@ -8,6 +8,7 @@ const { URL } = require('url');
 
 // Configuration
 const CONFIG_FILE = path.join(__dirname, '.n8n-config.json');
+const ENV_FILE = path.join(__dirname, '.env');
 const WORKFLOWS_DIR = path.join(__dirname, 'workflows');
 const EXECUTIONS_DIR = path.join(__dirname, 'executions');
 
@@ -18,19 +19,55 @@ const EXECUTIONS_DIR = path.join(__dirname, 'executions');
   }
 });
 
-// Load config
-function loadConfig() {
-  if (!fs.existsSync(CONFIG_FILE)) {
-    console.error('Config file not found. Please create .n8n-config.json');
-    console.error('Example:');
-    console.error(JSON.stringify({
-      baseUrl: 'https://n8n.seibert.tools',
-      apiKey: 'your-api-key-here',
-      projectId: 'your-project-id'
-    }, null, 2));
-    process.exit(1);
+// Load .env file if it exists
+function loadEnv() {
+  if (fs.existsSync(ENV_FILE)) {
+    const envContent = fs.readFileSync(ENV_FILE, 'utf8');
+    envContent.split('\n').forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed && !trimmed.startsWith('#')) {
+        const [key, ...valueParts] = trimmed.split('=');
+        const value = valueParts.join('=').trim();
+        // Remove quotes if present
+        const cleanValue = value.replace(/^["']|["']$/g, '');
+        process.env[key.trim()] = cleanValue;
+      }
+    });
   }
-  return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+}
+
+// Load config from env vars (preferred) or JSON file (fallback)
+function loadConfig() {
+  loadEnv();
+
+  // Check env vars first
+  if (process.env.N8N_BASE_URL && process.env.N8N_API_KEY) {
+    return {
+      baseUrl: process.env.N8N_BASE_URL,
+      apiKey: process.env.N8N_API_KEY,
+      projectId: process.env.N8N_PROJECT_ID || ''
+    };
+  }
+
+  // Fallback to JSON config
+  if (fs.existsSync(CONFIG_FILE)) {
+    return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
+  }
+
+  // No config found
+  console.error('❌ No configuration found!');
+  console.error('\nOption 1 (Recommended): Create a .env file:');
+  console.error('  N8N_BASE_URL=https://your-n8n-instance.com');
+  console.error('  N8N_API_KEY=your-api-key-here');
+  console.error('  N8N_PROJECT_ID=your-project-id  # optional');
+  console.error('\nOption 2: Create .n8n-config.json:');
+  console.error(JSON.stringify({
+    baseUrl: 'https://your-n8n-instance.com',
+    apiKey: 'your-api-key-here',
+    projectId: 'your-project-id'
+  }, null, 2));
+  console.error('\nRun: ./setup.sh');
+  process.exit(1);
 }
 
 // HTTP request helper
